@@ -102,6 +102,11 @@ public sealed class FallbackUpstreamClient : IUpstreamClient, IDisposable
         return null;
     }
 
+    public string GetServiceIndexUrl()
+    {
+        return _clients[0].GetServiceIndexUrl();
+    }
+
     public void Dispose()
     {
         foreach (var disposable in _clients.OfType<IDisposable>())

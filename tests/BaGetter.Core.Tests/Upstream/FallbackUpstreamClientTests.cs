@@ -13,6 +13,24 @@ namespace BaGetter.Core.Tests.Upstream;
 public class FallbackUpstreamClientTests
 {
     [Fact]
+    public void GetServiceIndexUrl_UsesFirstMirror()
+    {
+        var first = new Mock<IUpstreamClient>();
+        var second = new Mock<IUpstreamClient>();
+
+        first.Setup(x => x.GetServiceIndexUrl()).Returns("https://first.example/v3/index.json");
+        second.Setup(x => x.GetServiceIndexUrl()).Returns("https://second.example/v3/index.json");
+
+        var target = new FallbackUpstreamClient(
+            [first.Object, second.Object],
+            Mock.Of<ILogger<FallbackUpstreamClient>>());
+
+        var result = target.GetServiceIndexUrl();
+
+        Assert.Equal("https://first.example/v3/index.json", result);
+    }
+
+    [Fact]
     public async Task DownloadPackageOrNullAsync_UsesNextMirrorWhenFirstReturnsNull()
     {
         var first = new Mock<IUpstreamClient>();
